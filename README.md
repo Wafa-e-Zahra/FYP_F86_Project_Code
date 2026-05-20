@@ -1,4 +1,4 @@
---
+
 
 ## 🛠️ Tech Stack
 
@@ -6,20 +6,8 @@
 *   **Computer Vision & Audio Processing:** OpenCV, Librosa, Scikit-Image
 *   **Backend & Frontend:** Flask, HTML5, CSS3, JavaScript
 
----
----
 
-## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-***
-
-### 💡 Tips for Customization:
-1. Replace `yourusername` in the git clone command with your actual GitHub username.
-2. If your scripts use different names than `predict_image.py` or `app.py`, update them under the **Here is a professional and structured `README.md` file designed for your Final Year Project (FYP). It covers everything from architectural flows to installation and usage instructions.
-
-***
 
 # DeepFakeGuard: Multimodal Deepfake Detection System
 
