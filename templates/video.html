@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DeepFakeGuard</title>
+<style>
+body {
+    background: linear-gradient(135deg, #FF72A5, #7A36F4);
+    font-family: Arial;
+    color: white;
+    text-align: center;
+    padding: 50px;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: rgba(0,0,0,0.3);
+    padding: 30px;
+    border-radius: 15px;
+}
+button {
+    padding: 15px;
+    width: 100%;
+    background: #E91E63;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>DeepFakeGuard</h1>
+    <p>Video Deepfake Detection</p>
+
+    <input type="file" id="video" accept="video/*"><br><br>
+    <button onclick="analyze()">Run AI Analysis</button>
+
+    <h2 id="result"></h2>
+</div>
+
+<script>
+async function analyze() {
+    const file = document.getElementById("video").files[0];
+    if (!file) {
+        alert("Please upload a video");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const res = await fetch("/predict", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            const txt = await res.text();
+            throw new Error(txt);
+        }
+
+        const data = await res.json();
+        document.getElementById("result").innerText =
+            `${data.label} (${data.confidence})`;
+
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+}
+</script>
+
+</body>
+</html>

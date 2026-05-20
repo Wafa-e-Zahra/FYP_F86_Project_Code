@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFakeGuard | Forensic Lab</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #f06292 0%, #7e57c2 100%);
+            --accent-pink: #e91e63;
+            --deep-purple: #7e57c2;
+            --glass-white: rgba(255, 255, 255, 0.95);
+        }
+
+        body { 
+            background: var(--primary-gradient); 
+            min-height: 100vh; 
+            color: white; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            padding-bottom: 50px;
+        }
+
+        .glass-card { 
+            background: var(--glass-white); 
+            border-radius: 20px; 
+            padding: 35px; 
+            color: #2c3e50; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            margin: 20px auto; 
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Results & Badges */
+        .result-header {
+            border-bottom: 2px solid #eee;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+        }
+
+        .result-badge { 
+            font-size: 1.2rem; 
+            padding: 12px 30px; 
+            border-radius: 50px; 
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Timeline Styling */
+        .forensic-timeline {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: 0.2s;
+        }
+
+        .timeline-item:hover { background: #fff; }
+
+        .status-pill {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Form Controls */
+        .form-control, .form-select { 
+            background-color: #f1f3f5; 
+            border: 2px solid transparent; 
+            border-radius: 12px; 
+            margin-bottom: 15px; 
+            padding: 12px; 
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            background-color: #fff;
+            border-color: var(--deep-purple);
+            box-shadow: none;
+        }
+
+        .btn-custom { 
+            background: var(--accent-pink); 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            width: 100%; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+        }
+
+        .btn-custom:hover { 
+            background-color: #d81b60; 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+            color: white;
+        }
+
+        .report-link-card {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .forensic-img { 
+            border-radius: 15px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-height: 350px;
+            width: 100%;
+            object-fit: cover;
+            border: 4px solid white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-uppercase" style="letter-spacing: 4px;">🛡️ DeepFakeGuard</h1>
+        <p class="opacity-75">Your Truth Starts Here</p>
+    </div>
+
+    {% if view == 'entry' %}
+        <!-- AUTH SECTION -->
+        <div class="glass-card" style="max-width: 450px;">
+            <div class="text-center mb-4">
+                <h4 class="fw-bold">{{ 'Create Analyst Profile' if mode == 'signup' else 'System Authorization' }}</h4>
+                <p class="text-muted small">Enter credentials to access secure pipelines</p>
+            </div>
+            
+            <form action="{{ '/signup' if mode == 'signup' else '/login' }}" method="POST">
+                {% if mode == 'signup' %}
+                    <input type="text" name="username" class="form-control" placeholder="Full Name" required>
+                {% endif %}
+                <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                <input type="password" name="password" class="form-control" placeholder="Access Password" required>
+                <button type="submit" class="btn btn-custom mt-2">{{ 'Register Analyst' if mode == 'signup' else 'Open Secure Session' }}</button>
+            </form>
+            
+            <div class="text-center mt-4 small">
+                {% if mode == 'signup' %}
+                    Already authorized? <a href="/?mode=login" class="text-primary fw-bold text-decoration-none">Login</a>
+                {% else %}
+                    New investigator? <a href="/?mode=signup" class="text-primary fw-bold text-decoration-none">Create Account</a>
+                {% endif %}
+            </div>
+        </div>
+
+    {% else %}
+        <!-- DASHBOARD SECTION -->
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="glass-card h-100">
+            
+                    <form action="/" method="POST" enctype="multipart/form-data">
+                        <label class="small fw-bold text-muted text-uppercase">Analysis Pipeline</label>
+                        <select name="analysis_type" id="pipeSelect" class="form-select mb-3" onchange="updateUI()" required>
+                            <option value="image">Static Image Analysis</option>
+                            <option value="video">Multimodal Video/Audio</option>
+                        </select>
+
+                        <label class="small fw-bold text-muted text-uppercase" id="fileLabel">Source Image</label>
+                        <input type="file" name="file" id="fileInput" class="form-control mb-4" accept="image/*" required>
+                        
+                        <button type="submit" class="btn btn-custom mb-3">Execute Forensic Scan</button>
+                        <a href="/logout" class="btn btn-outline-danger w-100" style="border-radius: 12px; font-weight: bold;">Terminate Session</a>
+                    </form>
+                </div>
+            </div>
+
+            {% if analysis %}
+            <div class="col-lg-7">
+                <div class="glass-card h-100">
+                    <div class="result-header text-center">
+                        <h6 class="text-muted text-uppercase small fw-bold">Classification Result</h6>
+                        <span class="result-badge {{ 'bg-danger' if analysis.result == 'FAKE' else 'bg-success' }}">
+                            {{ analysis.result }} • {{ analysis.confidence }}% Confidence
+                        </span>
+                    </div>
+
+                    {% if analysis.type == 'image' %}
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <p class="small fw-bold text-center text-muted">SOURCE</p>
+                                <img src="{{ url_for('static', filename='uploads/' + (analysis.path.split('\\')[-1] if '\\' in analysis.path else analysis.path.split('/')[-1])) }}" class="forensic-img">
+                            </div>
+                            <div class="col-6">
+                                <p class="small fw-bold text-center text-muted">NEURAL HEATMAP</p>
+                                <img src="data:image/png;base64,{{ analysis.heatmap }}" class="forensic-img">
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="video-container mb-4">
+                            <p class="small fw-bold text-muted text-uppercase">Temporal Evidence Log</p>
+                            <div class="forensic-timeline mb-3">
+                                {% for item in analysis.timeline %}
+                                <div class="timeline-item">
+                                    <span><strong class="text-primary">{{ item.time }}</strong></span>
+                                    <span class="small text-muted">{{ item.fake_score }}% Probability</span>
+                                    <span class="status-pill {{ 'bg-danger text-white' if item.status == 'FAKE' else 'bg-success text-white' }}">
+                                        {{ item.status }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="report-link-card">
+                        <div>
+                            <h6 class="mb-0 fw-bold">Forensic Report Generated</h6>
+                            <p class="mb-0 small opacity-75">Analysis checksum: {{ analysis.confidence }}</p>
+                        </div>
+                        <a href="/static/reports/report_{{ analysis.path.split('\\')[-1] if '\\' in analysis.path else analysis.path.split('/')[-1] }}.txt" 
+                           target="_blank" class="btn btn-light btn-sm fw-bold">Download .TXT Report</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function updateUI() {
+        const pipe = document.getElementById('pipeSelect').value;
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.getElementById('fileLabel');
+
+        if(pipe === 'image') {
+            fileInput.accept = "image/*";
+            fileLabel.innerText = "Source Image";
+        } else {
+            fileInput.accept = "video/*";
+            fileLabel.innerText = "Source Video";
+        }
+        fileInput.value = ""; 
+    }
+</script>
+
+</body>
+</html>
