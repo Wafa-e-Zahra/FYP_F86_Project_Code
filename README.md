@@ -16,7 +16,7 @@
 [![Framework: PyTorch](https://img.shields.io/badge/Framework-PyTorch-EE4C2C.svg)](https://pytorch.org/)
 [![Framework: TensorFlow](https://img.shields.io/badge/Framework-TensorFlow-FF6F00.svg)](https://www.tensorflow.org/)
 
-**DeepFakeGuard** is an advanced, end-to-end multimodal deepfake detection framework designed to identify and flag synthetic and manipulated media across three key pillars: **Image, Video, and**. Developed as a Final Year Project (FYP) at Sukkur IBA University, the system unifies specialized deep learning architectures and classic computer vision/signal processing techniques into a single, high-performance deployment pipeline to combat digital misinformation.
+**DeepFakeGuard** is an advanced, end-to-end multimodal deepfake detection framework designed to identify and flag synthetic and manipulated media across two key pillars: **Image & Video**. Developed as a Final Year Project (FYP) at Sukkur IBA University, the system unifies specialized deep learning architectures and classic computer vision/signal processing techniques into a single, high-performance deployment pipeline to combat digital misinformation.
 
 ---
 
